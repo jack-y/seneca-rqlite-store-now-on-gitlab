@@ -1,5 +1,5 @@
 language: node_js
-sudo: false
+sudo: required
 
 node_js:
   - '5'
@@ -10,6 +10,17 @@ node_js:
 cache:
   directories:
       - node_modules
+
+env:
+  - TEST_ENV=travis
+
+services:
+  - docker
+
+before_install:
+  - docker pull rqlite/rqlite
+  - docker run -p 127.0.0.1:4001:4001 -p 127.0.0.1:4002:4002 rqlite/rqlite
+  - docker ps -a
 
 after_script:
   - npm run coveralls

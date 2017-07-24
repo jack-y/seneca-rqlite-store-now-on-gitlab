@@ -57,32 +57,53 @@ describe('requester get', function () {
   })
   // Request on the leader
   it('leader', function (fin) {
-    var oldOption = testConfig.host
-    testConfig.host = testConfig.leader
-    requester.get(testConfig, '/db/query?q=select%20*%20from%20sqlite_master')
-    .then(function (result) {
-      testConfig.host = oldOption
-      expect(result.data.results[0].values).to.exist()
+    // Checks if this is not a Travis Build environment
+    // There is no cluster in the Travis Build environment
+    if (!process.env.TEST_ENV || process.env.TEST_ENV !== 'travis') {
+      var oldOption = testConfig.host
+      testConfig.host = testConfig.leader
+      requester.get(testConfig, '/db/query?q=select%20*%20from%20sqlite_master')
+      .then(function (result) {
+        testConfig.host = oldOption
+        expect(result.data.results[0].values).to.exist()
+        fin()
+      })
+    } else {
+      // Running in Travis Build environment: no cluster, so no test
       fin()
-    })
+    }
   })
   // Redirection to the leader
   it('redirect', function (fin) {
-    requester.get(testConfig, '/db/query?q=select%20*%20from%20sqlite_master')
-    .then(function (result) {
-      expect(result.data.results[0].values).to.exist()
+    // Checks if this is not a Travis Build environment
+    // There is no cluster in the Travis Build environment
+    if (!process.env.TEST_ENV || process.env.TEST_ENV !== 'travis') {
+      requester.get(testConfig, '/db/query?q=select%20*%20from%20sqlite_master')
+      .then(function (result) {
+        expect(result.data.results[0].values).to.exist()
+        fin()
+      })
+    } else {
+      // Running in Travis Build environment: no cluster, so no test
       fin()
-    })
+    }
   })
   // Maximumu number of redirections reached
   it('max redirect reached', function (fin) {
-    testConfig.redirects = testConfig.maxredirects
-    requester.get(testConfig, '/db/query?q=select%20*%20from%20sqlite_master')
-    .catch(function (err) {
-      delete testConfig.redirects
-      expect(err.error).to.exist()
+    // Checks if this is not a Travis Build environment
+    // There is no cluster in the Travis Build environment
+    if (!process.env.TEST_ENV || process.env.TEST_ENV !== 'travis') {
+      testConfig.redirects = testConfig.maxredirects
+      requester.get(testConfig, '/db/query?q=select%20*%20from%20sqlite_master')
+      .catch(function (err) {
+        delete testConfig.redirects
+        expect(err.error).to.exist()
+        fin()
+      })
+    } else {
+      // Running in Travis Build environment: no cluster, so no test
       fin()
-    })
+    }
   })
   // No options object
   it('no options object', function (fin) {
