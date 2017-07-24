@@ -12,7 +12,6 @@ const tableSchema = require('../config/table-schema')
 
 // Prerequisites
 const requester = require('../requester')
-const httpapi = require('../http-api')
 
 // Sets and returns a Seneca instance in test mode
 // Options can be passed to the rqlite-store plugin
