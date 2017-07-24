@@ -17,9 +17,6 @@ config.ignore_no_such_table_error = false  // default: false
 config.protocol = 'http' // http or https, default: http
 config.host = process.env.TRAVIS_HOST ? process.env.TRAVIS_HOST : '192.168.1.35' // default: 127.0.0.1
 config.port = process.env.TRAVIS_PORT ? process.env.TRAVIS_PORT : 38501 // default: 4001
-console.log('process.env.TRAVIS host port', process.env.TRAVIS_HOST, process.env.TRAVIS_PORT)
-console.log('config.host', config.host)
-console.log('config.port', config.port)
 // See: https://github.com/rqlite/rqlite/blob/master/doc/CONSISTENCY.md
 config.consistency_level = 'weak' // none, weak or strong, default: weak
 // See: https://github.com/rqlite/rqlite/blob/master/doc/DATA_API.md#sending-requests-to-followers

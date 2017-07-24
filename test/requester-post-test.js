@@ -20,7 +20,7 @@ describe('requester post', function () {
   it('https', function (fin) {
     var options = {
       protocol: 'https',
-      host: 'www.qwant.com',
+      host: 'www.youtube.com',
       port: 443
     }
     requester.post(options, '/', {})

@@ -132,18 +132,5 @@ describe('requester get', function () {
       fin()
     })
   })
-  // RQLite status
-  it('status', function (fin) {
-    requester.get(testConfig, '/status')
-    .then(function (result) {
-      expect(result.data.store.leader).to.exist()
-      fin()
-    })
-    .catch(function (err) {
-      console.log('err', err)
-      expect(err).to.exist()
-      fin()
-    })
-  })
   //
 })
