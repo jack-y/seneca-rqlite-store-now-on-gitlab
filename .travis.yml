@@ -12,8 +12,7 @@ cache:
       - node_modules
 
 env:
-  - TRAVIS_HOST=127.0.0.1
-  - TRAVIS_PORT=4001
+  - TRAVIS_HOST=127.0.0.1 TRAVIS_PORT=4001
 
 services:
   - docker
