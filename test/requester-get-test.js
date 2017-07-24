@@ -59,7 +59,7 @@ describe('requester get', function () {
   it('leader', function (fin) {
     // Checks if this is not a Travis Build environment
     // There is no cluster in the Travis Build environment
-    if (!process.env.TEST_ENV || process.env.TEST_ENV !== 'travis') {
+    if (!process.env.TRAVIS_HOST) {
       var oldOption = testConfig.host
       testConfig.host = testConfig.leader
       requester.get(testConfig, '/db/query?q=select%20*%20from%20sqlite_master')
@@ -77,7 +77,7 @@ describe('requester get', function () {
   it('redirect', function (fin) {
     // Checks if this is not a Travis Build environment
     // There is no cluster in the Travis Build environment
-    if (!process.env.TEST_ENV || process.env.TEST_ENV !== 'travis') {
+    if (!process.env.TRAVIS_HOST) {
       requester.get(testConfig, '/db/query?q=select%20*%20from%20sqlite_master')
       .then(function (result) {
         expect(result.data.results[0].values).to.exist()
@@ -92,7 +92,7 @@ describe('requester get', function () {
   it('max redirect reached', function (fin) {
     // Checks if this is not a Travis Build environment
     // There is no cluster in the Travis Build environment
-    if (!process.env.TEST_ENV || process.env.TEST_ENV !== 'travis') {
+    if (!process.env.TRAVIS_HOST) {
       testConfig.redirects = testConfig.maxredirects
       requester.get(testConfig, '/db/query?q=select%20*%20from%20sqlite_master')
       .catch(function (err) {

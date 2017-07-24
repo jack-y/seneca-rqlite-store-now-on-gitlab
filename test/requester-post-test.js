@@ -59,7 +59,7 @@ describe('requester post', function () {
   it('leader', function (fin) {
     // Checks if this is not a Travis Build environment
     // There is no cluster in the Travis Build environment
-    if (!process.env.TEST_ENV || process.env.TEST_ENV !== 'travis') {
+    if (!process.env.TRAVIS_HOST) {
       var oldOption = testConfig.host
       testConfig.host = testConfig.leader
       var data = ['select count(*) from sqlite_master']
@@ -70,7 +70,7 @@ describe('requester post', function () {
         fin()
       })
     } else {
-      // Running in Travis Build environment: no cluster, so no test
+      // Running in Travis Build environment: no cluster, no test
       fin()
     }
   })
@@ -78,7 +78,7 @@ describe('requester post', function () {
   it('redirect', function (fin) {
     // Checks if this is not a Travis Build environment
     // There is no cluster in the Travis Build environment
-    if (!process.env.TEST_ENV || process.env.TEST_ENV !== 'travis') {
+    if (!process.env.TRAVIS_HOST) {
       var data = ['select count(*) from sqlite_master']
       requester.post(testConfig, '/db/execute', data)
       .then(function (result) {
@@ -86,7 +86,7 @@ describe('requester post', function () {
         fin()
       })
     } else {
-      // Running in Travis Build environment: no cluster, so no test
+      // Running in Travis Build environment: no cluster, no test
       fin()
     }
   })
@@ -94,7 +94,7 @@ describe('requester post', function () {
   it('max redirect reached', function (fin) {
     // Checks if this is not a Travis Build environment
     // There is no cluster in the Travis Build environment
-    if (!process.env.TEST_ENV || process.env.TEST_ENV !== 'travis') {
+    if (!process.env.TRAVIS_HOST) {
       testConfig.redirects = testConfig.maxredirects
       var data = ['select count(*) from sqlite_master']
       requester.post(testConfig, '/db/execute', data)
@@ -104,7 +104,7 @@ describe('requester post', function () {
         fin()
       })
     } else {
-      // Running in Travis Build environment: no cluster, so no test
+      // Running in Travis Build environment: no cluster, no test
       fin()
     }
   })
