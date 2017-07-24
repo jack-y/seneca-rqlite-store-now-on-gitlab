@@ -3,7 +3,7 @@
 
 # seneca-rqlite-store
 
-Last update: 07/21/2017
+Last update: 07/24/2017
 
 <a href="https://badge.fury.io/js/seneca-rqlite-store"><img src="https://badge.fury.io/js/seneca-rqlite-store.svg" alt="npm version" height="20"></a>&nbsp;<a href="https://www.npmjs.com/package/seneca-rqlite-store"><img src="https://img.shields.io/npm/dm/seneca-rqlite-store.svg?maxAge=2592000" alt="Downloads count"></a>&nbsp;<a href="https://travis-ci.org/jack-y/seneca-rqlite-store"><img src="https://travis-ci.org/jack-y/seneca-rqlite-store.svg?branch=master" alt="build status" data-canonical-src="https://travis-ci.org/jack-y/seneca-rqlite-store.svg" height="20"></a>&nbsp;<a href="https://david-dm.org/jack-y/seneca-rqlite-store"><img src="https://david-dm.org/jack-y/seneca-rqlite-store.svg" alt="Dependency Status" data-canonical-src="https://david-dm.org/jack-y/seneca-rqlite-store.svg" height="20"></a>&nbsp;<a href='https://coveralls.io/github/jack-y/seneca-rqlite-store?branch=master'><img src='https://coveralls.io/repos/github/jack-y/seneca-rqlite-store/badge.svg?branch=master' alt='Coverage Status' /></a>
 
