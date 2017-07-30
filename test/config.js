@@ -21,9 +21,13 @@ config.port = process.env.TRAVIS_PORT ? process.env.TRAVIS_PORT : 38501 // defau
 config.consistency_level = 'weak' // none, weak or strong, default: weak
 // See: https://github.com/rqlite/rqlite/blob/master/doc/DATA_API.md#sending-requests-to-followers
 config.maxredirects = 10 // default: 10
+// Agent optimization
+config.timeout = 60000 // default: 60000
+config.keepalive = false // default: false
 
 // RQLite configuration for testFunctions
-config.leader = process.env.TRAVIS_HOST ? process.env.TRAVIS_HOST : '192.168.1.33'
+config.leaderhost = process.env.TRAVIS_HOST ? process.env.TRAVIS_HOST : '192.168.1.33'
+config.leaderport = process.env.TRAVIS_PORT ? process.env.TRAVIS_PORT : 38601
 
 // Seneca web UI options
 // See: https://github.com/senecajs/seneca-web

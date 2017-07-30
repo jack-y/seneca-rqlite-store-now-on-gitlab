@@ -20,7 +20,7 @@ var describe = lab.describe
 var it = lab.it
 var expect = Code.expect
 
-describe('list on bad table', function () {
+describe('list on bad table', {timeout: testFunctions.timeout}, function () {
   //
   // No such table: ignore the error
   it('ignore', function (fin) {

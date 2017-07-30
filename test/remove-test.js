@@ -20,7 +20,7 @@ var describe = lab.describe
 var it = lab.it
 var expect = Code.expect
 
-describe('remove', function () {
+describe('remove', {timeout: testFunctions.timeout}, function () {
   //
   // Removes without argument
   it('no arg', function (fin) {

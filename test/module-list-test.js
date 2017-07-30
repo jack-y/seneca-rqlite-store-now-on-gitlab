@@ -7,6 +7,7 @@
 
 // Prerequisites
 const moduleList = require('../module-list')
+const testFunctions = require('./functions')
 
 // Test prerequisites
 const Code = require('code')
@@ -16,7 +17,7 @@ var describe = lab.describe
 var it = lab.it
 var expect = Code.expect
 
-describe('module list', function () {
+describe('module list', {timeout: testFunctions.timeout}, function () {
   //
   // Bad argument
   it('no arg', function (fin) {

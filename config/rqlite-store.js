@@ -21,6 +21,9 @@ config.port = 4001
 config.consistency_level = 'weak' // none, weak or strong
 // See: https://github.com/rqlite/rqlite/blob/master/doc/DATA_API.md#sending-requests-to-followers
 config.maxredirects = 10
+// Agent optimization
+config.timeout = 60000
+config.keepalive = false
 
 // Seneca web UI options
 // See: https://github.com/senecajs/seneca-web

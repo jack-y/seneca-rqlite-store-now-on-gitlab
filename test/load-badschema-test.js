@@ -20,7 +20,7 @@ var describe = lab.describe
 var it = lab.it
 var expect = Code.expect
 
-describe('load from bad schema', function () {
+describe('load from bad schema', {timeout: testFunctions.timeout}, function () {
   //
   // The ID exists but there is a bad column in the table
   it('bad column in table', function (fin) {

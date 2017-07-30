@@ -20,7 +20,7 @@ var describe = lab.describe
 var it = lab.it
 var expect = Code.expect
 
-describe('native', function () {
+describe('native', {timeout: testFunctions.timeout}, function () {
   //
   // Gets the HTTP API
   it('get http api', function (fin) {

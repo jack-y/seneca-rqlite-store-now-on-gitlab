@@ -27,7 +27,7 @@ var lab = (exports.lab = Lab.script())
 var describe = lab.describe
 var it = lab.it
 
-describe('seneca store', function () {
+describe('seneca store', {timeout: testFunctions.timeout}, function () {
   //
   it('basic', function (fin) {
     // Gets the Seneca instances

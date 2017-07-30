@@ -3,7 +3,7 @@
 
 # seneca-rqlite-store
 
-Last update: 07/24/2017
+Last update: 07/28/2017
 
 <a href="https://badge.fury.io/js/seneca-rqlite-store"><img src="https://badge.fury.io/js/seneca-rqlite-store.svg" alt="npm version" height="20"></a>&nbsp;<a href="https://www.npmjs.com/package/seneca-rqlite-store"><img src="https://img.shields.io/npm/dm/seneca-rqlite-store.svg?maxAge=2592000" alt="Downloads count"></a>&nbsp;<a href="https://travis-ci.org/jack-y/seneca-rqlite-store"><img src="https://travis-ci.org/jack-y/seneca-rqlite-store.svg?branch=master" alt="build status" data-canonical-src="https://travis-ci.org/jack-y/seneca-rqlite-store.svg" height="20"></a>&nbsp;<a href="https://david-dm.org/jack-y/seneca-rqlite-store"><img src="https://david-dm.org/jack-y/seneca-rqlite-store.svg" alt="Dependency Status" data-canonical-src="https://david-dm.org/jack-y/seneca-rqlite-store.svg" height="20"></a>&nbsp;<a href='https://coveralls.io/github/jack-y/seneca-rqlite-store?branch=master'><img src='https://coveralls.io/repos/github/jack-y/seneca-rqlite-store/badge.svg?branch=master' alt='Coverage Status' /></a>
 
@@ -76,6 +76,13 @@ RQLite exposes an [HTTP API][] allowing the database to be modified such that th
 - **maxredirects**: optional integer, default is `10`. The maximum number of redirect attempts to the leader before triggering an error. See the doc about [sending requests to followers][].
 
 > Note: as the RQLite documentation says, you can connect the plugin to any node in the cluster, and it will automatically forward its requests to the leader.
+
+### HTTP options
+
+Node http can run faster when using the [keep alive][] feature. The options are:
+
+- **timeout**: optional integer, default is `60000`. A number specifying the socket timeout in milliseconds. This will set the timeout before the socket is connected.
+- **keepalive**: default is `false`. If `true`, a new agent is set keeping sockets around even when there are no outstanding requests, so they can be used for future requests without having to reestablish a TCP connection.
 
 ### Ignore the *no such table* error
 
@@ -278,6 +285,7 @@ Licensed under [MIT][].
 [HTTP API]: https://github.com/rqlite/rqlite/blob/master/doc/DATA_API.md
 [consistency level]: https://github.com/rqlite/rqlite/blob/master/doc/CONSISTENCY.md
 [sending requests to followers]: https://github.com/rqlite/rqlite/blob/master/doc/DATA_API.md#sending-requests-to-followers
+[keep alive]: https://nodejs.org/api/http.html#http_new_agent_options
 [namespace]: http://senecajs.org/docs/tutorials/understanding-data-entities.html#zone-base-and-name-the-entity-namespace4
 [query format]: http://senecajs.org/docs/tutorials/understanding-query-syntax.html
 [SQLite documentation]: https://www.sqlite.org/lang.html

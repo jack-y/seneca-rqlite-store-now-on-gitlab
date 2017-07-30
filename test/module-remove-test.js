@@ -26,7 +26,7 @@ var describe = lab.describe
 var it = lab.it
 var expect = Code.expect
 
-describe('module remove', function () {
+describe('module remove', {timeout: testFunctions.timeout}, function () {
   //
   // Bad argument
   it('no arg', function (fin) {

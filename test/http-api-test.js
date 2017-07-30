@@ -14,7 +14,7 @@ var describe = lab.describe
 var it = lab.it
 var expect = Code.expect
 
-describe('http api', function () {
+describe('http api', {timeout: testFunctions.timeout}, function () {
   //
   // Execute transaction with bad array
   it('execute transaction bad array', function (fin) {
@@ -35,10 +35,13 @@ describe('http api', function () {
   // Query HTTPS with bad SQL
   it('query https bad sql', function (fin) {
     var oldProtocol = testConfig.protocol
+    var oldPort = testConfig.port
     testConfig.protocol = 'https'
+    testConfig.port = 443
     httpapi.query(testConfig, 'Ooops! I m not SQL.')
     .catch(function (err) {
       testConfig.protocol = oldProtocol
+      testConfig.port = oldPort
       expect(err.error).to.exist()
       fin()
     })

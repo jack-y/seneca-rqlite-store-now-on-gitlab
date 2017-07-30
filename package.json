@@ -1,6 +1,6 @@
 {
   "name": "seneca-rqlite-store",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "RQLite database driver for Seneca framework",
   "keywords": [
     "node.js",

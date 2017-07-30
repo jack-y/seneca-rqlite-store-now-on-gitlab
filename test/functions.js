@@ -13,6 +13,9 @@ const tableSchema = require('../config/table-schema')
 // Prerequisites
 const requester = require('../requester')
 
+// Default timeout for the tests
+exports.timeout = 5000
+
 // Sets and returns a Seneca instance in test mode
 // Options can be passed to the rqlite-store plugin
 exports.setSeneca = function (Seneca, options, role, fin, print) {

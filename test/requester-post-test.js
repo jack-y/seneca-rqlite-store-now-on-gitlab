@@ -14,7 +14,7 @@ var describe = lab.describe
 var it = lab.it
 var expect = Code.expect
 
-describe('requester post', function () {
+describe('requester post', {timeout: testFunctions.timeout}, function () {
   //
   // HTTPS result
   it('https', function (fin) {
@@ -59,13 +59,16 @@ describe('requester post', function () {
   it('leader', function (fin) {
     // Checks if this is not a Travis Build environment
     // There is no cluster in the Travis Build environment
-    if (!process.env.TRAVIS_HOST) {
-      var oldOption = testConfig.host
-      testConfig.host = testConfig.leader
+    if (!process.env.TRAVIS_HOST && testConfig.leaderhost) {
+      var oldOptionHost = testConfig.host
+      var oldOptionPort = testConfig.port
+      testConfig.host = testConfig.leaderhost
+      testConfig.port = testConfig.leaderport
       var data = ['select count(*) from sqlite_master']
       requester.post(testConfig, '/db/execute', data)
       .then(function (result) {
-        testConfig.host = oldOption
+        testConfig.host = oldOptionHost
+        testConfig.port = oldOptionPort
         expect(result.data.results[0]).to.exist()
         fin()
       })
@@ -78,7 +81,7 @@ describe('requester post', function () {
   it('redirect', function (fin) {
     // Checks if this is not a Travis Build environment
     // There is no cluster in the Travis Build environment
-    if (!process.env.TRAVIS_HOST) {
+    if (!process.env.TRAVIS_HOST && testConfig.leader) {
       var data = ['select count(*) from sqlite_master']
       requester.post(testConfig, '/db/execute', data)
       .then(function (result) {
@@ -94,7 +97,7 @@ describe('requester post', function () {
   it('max redirect reached', function (fin) {
     // Checks if this is not a Travis Build environment
     // There is no cluster in the Travis Build environment
-    if (!process.env.TRAVIS_HOST) {
+    if (!process.env.TRAVIS_HOST && testConfig.leader) {
       testConfig.redirects = testConfig.maxredirects
       var data = ['select count(*) from sqlite_master']
       requester.post(testConfig, '/db/execute', data)

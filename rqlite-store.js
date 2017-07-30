@@ -93,7 +93,6 @@ module.exports = function (options) {
 
     // Others functions
     list: function (args, done) { // QUERY
-      // Note: Native SQL list is not supported because of the JSON implementation
       moduleList.list(options, args)
       .then(function (result) {
         seneca.log.debug(function () {

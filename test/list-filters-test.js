@@ -20,7 +20,7 @@ var describe = lab.describe
 var it = lab.it
 var expect = Code.expect
 
-describe('list with filters', function () {
+describe('list with filters', {timeout: testFunctions.timeout}, function () {
   //
   // Creates the table and insert the entities
   it('entities creation', function (fin) {

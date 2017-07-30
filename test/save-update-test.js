@@ -20,7 +20,7 @@ var describe = lab.describe
 var it = lab.it
 var expect = Code.expect
 
-describe('save/update', function () {
+describe('save/update', {timeout: testFunctions.timeout}, function () {
   //
   // Updates in a bad table: ignores the error
   it('ignore no such table', function (fin) {

@@ -13,7 +13,7 @@ var describe = lab.describe
 var it = lab.it
 var expect = Code.expect
 
-describe('query utils', function () {
+describe('query utils', {timeout: testFunctions.timeout}, function () {
   //
   // No arg
   it('get query without arg', function (fin) {

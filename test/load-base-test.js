@@ -20,7 +20,7 @@ var describe = lab.describe
 var it = lab.it
 var expect = Code.expect
 
-describe('load with base', function () {
+describe('load with base', {timeout: testFunctions.timeout}, function () {
   //
   // Calls the load without argument
   it('no arg', function (fin) {

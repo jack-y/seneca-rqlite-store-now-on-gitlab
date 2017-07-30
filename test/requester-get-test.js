@@ -14,7 +14,7 @@ var describe = lab.describe
 var it = lab.it
 var expect = Code.expect
 
-describe('requester get', function () {
+describe('requester get', {timeout: testFunctions.timeout}, function () {
   //
   // HTTPS request
   it('https result', function (fin) {
@@ -59,13 +59,16 @@ describe('requester get', function () {
   it('leader', function (fin) {
     // Checks if this is not a Travis Build environment
     // There is no cluster in the Travis Build environment
-    if (!process.env.TRAVIS_HOST) {
-      var oldOption = testConfig.host
-      testConfig.host = testConfig.leader
+    if (!process.env.TRAVIS_HOST && testConfig.leaderhost) {
+      var oldOptionHost = testConfig.host
+      var oldOptionPort = testConfig.port
+      testConfig.host = testConfig.leaderhost
+      testConfig.port = testConfig.leaderport
       requester.get(testConfig, '/db/query?q=select%20*%20from%20sqlite_master')
       .then(function (result) {
-        testConfig.host = oldOption
-        expect(result.data.results[0].values).to.exist()
+        testConfig.host = oldOptionHost
+        testConfig.port = oldOptionPort
+        expect(result.data.results[0].columns).to.exist()
         fin()
       })
     } else {
@@ -77,10 +80,10 @@ describe('requester get', function () {
   it('redirect', function (fin) {
     // Checks if this is not a Travis Build environment
     // There is no cluster in the Travis Build environment
-    if (!process.env.TRAVIS_HOST) {
+    if (!process.env.TRAVIS_HOST && testConfig.leader) {
       requester.get(testConfig, '/db/query?q=select%20*%20from%20sqlite_master')
       .then(function (result) {
-        expect(result.data.results[0].values).to.exist()
+        expect(result.data.results[0].columns).to.exist()
         fin()
       })
     } else {
@@ -92,7 +95,7 @@ describe('requester get', function () {
   it('max redirect reached', function (fin) {
     // Checks if this is not a Travis Build environment
     // There is no cluster in the Travis Build environment
-    if (!process.env.TRAVIS_HOST) {
+    if (!process.env.TRAVIS_HOST && testConfig.leader) {
       testConfig.redirects = testConfig.maxredirects
       requester.get(testConfig, '/db/query?q=select%20*%20from%20sqlite_master')
       .catch(function (err) {
