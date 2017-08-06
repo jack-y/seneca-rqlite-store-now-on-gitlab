@@ -23,16 +23,12 @@ moduleSave.save = function (options, args) {
       if (args.ent.id) {
       // The entity has an ID: update
         moduleSave.update(options, args.ent)
-        .then(function (result) {
-          return resolve(result)
-        })
+        .then(function (result) { return resolve(result) })
         .catch(function (err) { return reject(err) })
       } else {
         // The entity has no ID: create
         moduleSave.create(options, args.ent)
-        .then(function (result) {
-          return resolve(result)
-        })
+        .then(function (result) { return resolve(result) })
         .catch(function (err) { return reject(err) })
       }
     } else {
@@ -71,9 +67,7 @@ moduleSave.create = function (options, argsEntity) {
         .then(function (result) {
           // Then, we retry to insert the entity
           moduleSave.create(options, argsEntity)
-          .then(function (result) {
-            return resolve(result)
-          })
+          .then(function (result) { return resolve(result) })
           .catch(function (err) { return reject(err) })
         })
         .catch(function (err) { return reject(err) })
@@ -87,6 +81,10 @@ moduleSave.create = function (options, argsEntity) {
 // Updates an entity
 moduleSave.update = function (options, entity) {
   return new Promise(function (resolve, reject) {
+    // Transforms the input entity as object
+    var entityObject = entity.data$()
+    delete entityObject.entity$
+    // Sets the RQLite table name
     var tablename = queryUtils.getTablename(entity)
     // Reads the previous version of the entity
     var query = 'SELECT json FROM ' +
@@ -97,9 +95,8 @@ moduleSave.update = function (options, entity) {
       // Checks if an entity is read
       if (result.length > 0) {
         // Sets the current values
-        var previous = entity.make$(result[0])
-        var current = _.cloneDeep(entity)
-        // Checks if merging the data is wanted
+        var previousObject = result[0]
+        // Checks whether the merge is to be performed
         var shouldMerge = true
         if (options.merge !== false && entity.merge$ === false) {
           shouldMerge = false
@@ -107,13 +104,11 @@ moduleSave.update = function (options, entity) {
         if (options.merge === false && entity.merge$ !== true) {
           shouldMerge = false
         }
+        var current = entityObject
         if (shouldMerge) {
-          current = _.cloneDeep(previous)
-          Object.assign(current, entity)
+          current = Object.assign(previousObject, entityObject)
         }
         // Removes seneca special properties
-        var updated = _.cloneDeep(current)
-        delete current.entity$
         delete current.merge$
         var jsonString = JSON.stringify(current).replace(/'/g, "''")
         // Executes the update
@@ -121,17 +116,13 @@ moduleSave.update = function (options, entity) {
           queryUtils.escapeStr(tablename) + " " + // eslint-disable-line
           "SET json = '" + jsonString + "' WHERE id = '" + entity.id + "'"
         httpapi.execute(options, statement)
-        .then(function (result) {
-          return resolve(updated)
-        })
+        .then(function (result) { return resolve(entity.make$(current)) })
         .catch(function (err) { return reject(err) })
       } else {
         // No entity read
         // Update is now a Create
         moduleSave.create(options, entity)
-        .then(function (result) {
-          return resolve(result)
-        })
+        .then(function (result) { return resolve(result) })
         .catch(function (err) { return reject(err) })
       }
     })
@@ -144,9 +135,7 @@ moduleSave.update = function (options, entity) {
         .then(function (result) {
           // Update is now a Create
           moduleSave.create(options, entity)
-          .then(function (result) {
-            return resolve(result)
-          })
+          .then(function (result) { return resolve(result) })
           .catch(function (err) { return reject(err) })
         })
         .catch(function (err) { return reject(err) })
@@ -166,9 +155,7 @@ moduleSave.createTable = function (options, name) {
     var statement = 'CREATE TABLE ' +
       queryUtils.escapeStr(name) + ' (' + tableSchema.schema + ')'
     httpapi.execute(options, statement)
-    .then(function (result) {
-      return resolve(result)
-    })
+    .then(function (result) { return resolve(result) })
     .catch(function (err) { return reject(err) })
   })
 }

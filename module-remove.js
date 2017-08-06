@@ -23,9 +23,7 @@ moduleRemove.remove = function (options, args) {
       // Checks if all entities are to be removed
       if (args.q.all$) {
         moduleRemove.deleteAll(options, args)
-        .then(function (result) {
-          return resolve(null)
-        })
+        .then(function (result) { return resolve(null) })
         .catch(function (err) { return reject(err) })
       } else {
         // Checks if there is no filter
@@ -74,9 +72,7 @@ moduleRemove.deleteFirst = function (options, args, list) {
       var delArgs = _.cloneDeep(args)
       delArgs.q.id = previous.id
       moduleRemove.deleteId(options, delArgs)
-      .then(function (result) {
-        return resolve(args.q.load$ ? previous : null)
-      })
+      .then(function (result) { return resolve(args.q.load$ ? previous : null) })
       .catch(function (err) { return reject(err) })
     } else {
       return resolve(null)
@@ -93,9 +89,7 @@ moduleRemove.deleteId = function (options, args) {
       queryUtils.escapeStr(queryUtils.getTablename(args.qent)) + ' ' +
       'WHERE id = "' + args.q.id + '"'
     httpapi.execute(options, statement)
-    .then(function (result) {
-      return resolve(args.qent.make$(result))
-    })
+    .then(function (result) { return resolve(args.qent.make$(result)) })
     .catch(function (err) {
       // Checks if the error 'no such table' is ignored
       if (options.ignore_no_such_table_error &&
@@ -124,9 +118,7 @@ moduleRemove.deleteAll = function (options, args) {
         'CREATE TABLE ' + tablename + ' (' + tableSchema.schema + ')'
       ]
       httpapi.executeTransaction(options, transaction)
-      .then(function (result) {
-        return resolve(result)
-      })
+      .then(function (result) { return resolve(result) })
       .catch(function (err) { return reject(err) })
     } else {
       // There are others filters: list before delete

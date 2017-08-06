@@ -3,7 +3,7 @@
 
 /**
  * HTTP API interface
- * Provides execute, transaction and query operations
+ * Provides 'execute', 'transaction' and 'query' operations
  * For more informations on RQLite HTTP API, see:
  * https://github.com/rqlite/rqlite/blob/master/doc/DATA_API.md
 **/
@@ -22,10 +22,7 @@ httpapi.execute = function (options, statement) {
     var transaction = [ statement ]
     // Runs the transaction
     httpapi.executeTransaction(options, transaction)
-    .then(function (result) {
-      // Execute successful
-      return resolve({success: true})
-    })
+    .then(function (result) { return resolve({success: true}) })
     .catch(function (err) { return reject(err) })
   })
 }

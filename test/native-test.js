@@ -15,10 +15,10 @@ const testFunctions = require('./functions')
 // Test prerequisites
 const Code = require('code')
 const Lab = require('lab', {timeout: testFunctions.timeout})
-var lab = (exports.lab = Lab.script())
-var describe = lab.describe
-var it = lab.it
-var expect = Code.expect
+const lab = (exports.lab = Lab.script())
+const describe = lab.describe
+const it = lab.it
+const expect = Code.expect
 
 describe('native', {timeout: testFunctions.timeout}, function () {
   //

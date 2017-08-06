@@ -12,6 +12,8 @@ const base = null
 const entityName = 'test'
 
 // Prerequisites
+const httpapi = require('../http-api')
+const moduleList = require('../module-list')
 const Seneca = require('seneca')
 const testFunctions = require('./functions')
 const testConfig = require('./config')
@@ -21,89 +23,243 @@ const moduleRemove = require('../module-remove')
 // Test prerequisites
 const Code = require('code')
 const Lab = require('lab', {timeout: testFunctions.timeout})
-var lab = (exports.lab = Lab.script())
-var describe = lab.describe
-var it = lab.it
-var expect = Code.expect
+const lab = (exports.lab = Lab.script())
+const before = lab.before
+const describe = lab.describe
+const it = lab.it
+const expect = Code.expect
+
+// Seneca
+var seneca
+const errMsg = 'ko'
+// Mocks the module
+const deleteAllCurrent = moduleRemove.deleteAll
+const deleteFirstCurrent = moduleRemove.deleteFirst
+// Mocks the http api
+const queryCurrent = httpapi.query
+// Mocks the list
+const listCurrent = moduleList.list
 
 describe('module remove', {timeout: testFunctions.timeout}, function () {
   //
-  // Bad argument
+  before((fin) => {
+    // Sets the Seneca instance
+    seneca = testFunctions.setSeneca(Seneca, testConfig, role, fin) // Add 'print' for debug
+    fin()
+  })
+  // Remove
   it('no arg', function (fin) {
-    moduleRemove.remove(null, {})
+    moduleRemove.remove(testConfig, {})
     .catch(function (err) {
-      expect(err).to.exist()
+      expect(err.error).to.equal(testConfig.badarguments)
       fin()
     })
   })
-  // Ignore the 'no such table' error
-  it('ignore no such table', function (fin) {
-    // Drops the table
-    testFunctions.dropTable(testConfig, base, entityName)
-    .then(function (result) {
-      // Gets the Seneca instance
-      var oldOption = testConfig.ignore_no_such_table_error
-      testConfig.ignore_no_such_table_error = true
-      var seneca = testFunctions.setSeneca(Seneca, testConfig, role, fin) // Add 'print' for debug
-      var entityFactory = seneca.make(base, entityName)
-      var qent = entityFactory.make$({f1: 'v1'})
-      moduleRemove.deleteId(testConfig, {q: {id: '007'}, qent: qent})
-      .then(function (result) {
-        testConfig.ignore_no_such_table_error = oldOption
-        expect(result).to.exist()
-        fin()
+  //
+  it('arg all$ on error', function (fin) {
+    // Mocks the module
+    moduleRemove.deleteAll = function (options, args) {
+      return new Promise(function (resolve, reject) {
+        return reject(new Error(errMsg))
       })
+    }
+    //
+    moduleRemove.remove(testConfig, {qent: {}, q: {all$: true}})
+    .catch(function (err) {
+      moduleRemove.deleteAll = deleteAllCurrent
+      expect(err.message).to.equal(errMsg)
+      fin()
     })
   })
-  // Catchs the 'no such table' error
-  it('catch no such table', function (fin) {
-    // Drops the table
-    testFunctions.dropTable(testConfig, base, entityName)
-    .then(function (result) {
-      // Gets the Seneca instance
-      var oldOption = testConfig.ignore_no_such_table_error
-      testConfig.ignore_no_such_table_error = false
-      var seneca = testFunctions.setSeneca(Seneca, testConfig, role, fin) // Add 'print' for debug
-      var entityFactory = seneca.make(base, entityName)
-      var qent = entityFactory.make$({f1: 'v1'})
-      moduleRemove.deleteId(testConfig, {q: {id: '007'}, qent: qent})
-      .catch(function (err) {
-        testConfig.ignore_no_such_table_error = oldOption
-        expect(err).to.exist()
-        fin()
+  //
+  it('arg all$ ok', function (fin) {
+    // Mocks the module
+    moduleRemove.deleteAll = function (options, args) {
+      return new Promise(function (resolve, reject) {
+        return resolve({success: true})
       })
+    }
+    //
+    moduleRemove.remove(testConfig, {qent: {}, q: {all$: true}})
+    .then(function (result) {
+      moduleRemove.deleteAll = deleteAllCurrent
+      expect(result).to.not.exist()
+      fin()
     })
   })
-  // Empty table
-  it('empty table', function (fin) {
-    // Truncates the table
-    testFunctions.truncateTable(testConfig, base, entityName)
-    .then(function (result) {
-      // Gets the Seneca instance
-      var seneca = testFunctions.setSeneca(Seneca, testConfig, role, fin) // Add 'print' for debug
-      var entityFactory = seneca.make(base, entityName)
-      var qent = entityFactory.make$({f1: 'v1'})
-      moduleRemove.remove(testConfig, {q: {}, qent: qent})
-      .then(function (result) {
-        expect(result).to.not.exist()
-        fin()
+  //
+  it('no filter, on error', function (fin) {
+    // Mocks the http api
+    httpapi.query = function (options, args) {
+      return new Promise(function (resolve, reject) {
+        return reject(new Error(errMsg))
       })
+    }
+    // Sets the parameter
+    const id = '004'
+    const entityFactory = seneca.make(base, entityName)
+    const entity = entityFactory.make$({id: id})
+    const args = { qent: entity, q: {} }
+    //
+    moduleRemove.remove(testConfig, args)
+    .catch(function (err) {
+      httpapi.query = queryCurrent
+      expect(err.message).to.equal(errMsg)
+      fin()
     })
   })
-  // Delete first no there is no such table
-  it('first no such table', function (fin) {
-    // Drops the table
-    testFunctions.dropTable(testConfig, base, entityName)
-    .then(function (result) {
-      // Gets the Seneca instance
-      var seneca = testFunctions.setSeneca(Seneca, testConfig, role, fin) // Add 'print' for debug
-      var entityFactory = seneca.make(base, entityName)
-      var qent = entityFactory.make$({f1: 'v1'})
-      moduleRemove.deleteFirst(testConfig, {q: {}, qent: qent}, [qent])
-      .catch(function (err) {
-        expect(err).to.exist()
-        fin()
+  //
+  it('no filter, ok, no result', function (fin) {
+    // Mocks the http api
+    httpapi.query = function (options, args) {
+      return new Promise(function (resolve, reject) {
+        return resolve([])
       })
+    }
+    // Sets the parameter
+    const id = '004'
+    const entityFactory = seneca.make(base, entityName)
+    const entity = entityFactory.make$({id: id})
+    const args = { qent: entity, q: {} }
+    //
+    moduleRemove.remove(testConfig, args)
+    .then(function (result) {
+      httpapi.query = queryCurrent
+      expect(result).to.not.exist()
+      fin()
+    })
+  })
+  //
+  it('no filter, ok, result, delete error', function (fin) {
+    // Mocks the http api
+    httpapi.query = function (options, args) {
+      return new Promise(function (resolve, reject) {
+        return resolve([{'foo': 'bar'}])
+      })
+    }
+    // Mocks the module
+    moduleRemove.deleteFirst = function (options, args) {
+      return new Promise(function (resolve, reject) {
+        return reject(new Error(errMsg))
+      })
+    }
+    // Sets the parameter
+    const id = '004'
+    const entityFactory = seneca.make(base, entityName)
+    const entity = entityFactory.make$({id: id})
+    const args = { qent: entity, q: {} }
+    //
+    moduleRemove.remove(testConfig, args)
+    .catch(function (err) {
+      httpapi.query = queryCurrent
+      moduleRemove.deleteFirst = deleteFirstCurrent
+      expect(err.message).to.equal(errMsg)
+      fin()
+    })
+  })
+  //
+  it('no filter, ok, result, delete ok', function (fin) {
+    // Mocks the http api
+    httpapi.query = function (options, args) {
+      return new Promise(function (resolve, reject) {
+        return resolve([{'foo': 'bar'}])
+      })
+    }
+    // Mocks the module
+    moduleRemove.deleteFirst = function (options, args) {
+      return new Promise(function (resolve, reject) {
+        return resolve({success: true})
+      })
+    }
+    // Sets the parameter
+    const id = '004'
+    const entityFactory = seneca.make(base, entityName)
+    const entity = entityFactory.make$({id: id})
+    const args = { qent: entity, q: {} }
+    //
+    moduleRemove.remove(testConfig, args)
+    .then(function (result) {
+      httpapi.query = queryCurrent
+      moduleRemove.deleteFirst = deleteFirstCurrent
+      expect(result.success).to.equal(true)
+      fin()
+    })
+  })
+  //
+  it('filter, list on error', function (fin) {
+    // Mocks the module
+    moduleList.list = function (options, args) {
+      return new Promise(function (resolve, reject) {
+        return reject(new Error(errMsg))
+      })
+    }
+    // Sets the parameter
+    const id = '004'
+    const entityFactory = seneca.make(base, entityName)
+    const entity = entityFactory.make$({id: id})
+    const args = { qent: entity, q: {name: 'foo'} }
+    //
+    moduleRemove.remove(testConfig, args)
+    .catch(function (err) {
+      moduleList.list = listCurrent
+      expect(err.message).to.equal(errMsg)
+      fin()
+    })
+  })
+  //
+  it('filter, list ok, delete on error', function (fin) {
+    // Mocks the list
+    moduleList.list = function (options, args) {
+      return new Promise(function (resolve, reject) {
+        return resolve({foo: 'bar'})
+      })
+    }
+    // Mocks the delete
+    moduleRemove.deleteFirst = function (options, args) {
+      return new Promise(function (resolve, reject) {
+        return reject(new Error(errMsg))
+      })
+    }
+    // Sets the parameter
+    const id = '004'
+    const entityFactory = seneca.make(base, entityName)
+    const entity = entityFactory.make$({id: id})
+    const args = { qent: entity, q: {name: 'foo'} }
+    //
+    moduleRemove.remove(testConfig, args)
+    .catch(function (err) {
+      moduleList.list = listCurrent
+      moduleRemove.deleteFirst = deleteFirstCurrent
+      expect(err.message).to.equal(errMsg)
+      fin()
+    })
+  })
+  //
+  it('filter, list ok, delete ok', function (fin) {
+    // Mocks the list
+    moduleList.list = function (options, args) {
+      return new Promise(function (resolve, reject) {
+        return resolve({foo: 'bar'})
+      })
+    }
+    // Mocks the delete
+    moduleRemove.deleteFirst = function (options, args) {
+      return new Promise(function (resolve, reject) {
+        return resolve({success: true})
+      })
+    }
+    // Sets the parameter
+    const id = '004'
+    const entityFactory = seneca.make(base, entityName)
+    const entity = entityFactory.make$({id: id})
+    const args = { qent: entity, q: {name: 'foo'} }
+    //
+    moduleRemove.remove(testConfig, args)
+    .then(function (result) {
+      moduleList.list = listCurrent
+      moduleRemove.deleteFirst = deleteFirstCurrent
+      expect(result.success).to.equal(true)
+      fin()
     })
   })
   //

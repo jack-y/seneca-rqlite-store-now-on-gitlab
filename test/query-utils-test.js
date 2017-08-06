@@ -8,20 +8,26 @@ const testFunctions = require('./functions')
 // Test prerequisites
 const Code = require('code')
 const Lab = require('lab', {timeout: testFunctions.timeout})
-var lab = (exports.lab = Lab.script())
-var describe = lab.describe
-var it = lab.it
-var expect = Code.expect
+const lab = (exports.lab = Lab.script())
+const describe = lab.describe
+const it = lab.it
+const expect = Code.expect
 
 describe('query utils', {timeout: testFunctions.timeout}, function () {
-  //
   // No arg
   it('get query without arg', function (fin) {
     var sql = queryUtils.getQueryWhere({})
     expect(sql).to.equal('')
     fin()
   })
-  // no arg fields$
+  //
+  it('get query native', function (fin) {
+    const nativeSql = 'select * from foo'
+    var sql = queryUtils.getQueryWhere({q: {native$: nativeSql}})
+    expect(sql).to.equal(nativeSql)
+    fin()
+  })
+  //
   it('do fields$ no arg', function (fin) {
     var list = [
       {f1: 'v1', f2: 'v2'},
@@ -72,12 +78,9 @@ describe('query utils', {timeout: testFunctions.timeout}, function () {
   })
   // Escapes string
   it('escape string', function (fin) {
-    var input = '\0\x08\b\x09\t\x1a\n\r %'
+    var input = '\0\x08\x09\b\t\x1a\n\r %'
     var result = queryUtils.escapeStr(input)
-    expect(result).to.equal('\\0\\b\\b\\t\\t\\z\\n\\r \\%')
-    input = '\b'
-    result = queryUtils.escapeStr(input)
-    expect(result).to.equal('\\b')
+    expect(result).to.equal('\\0\\b\\t\\b\\t\\z\\n\\r \\%')
     fin()
   })
   //

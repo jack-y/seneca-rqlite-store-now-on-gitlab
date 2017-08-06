@@ -24,6 +24,9 @@ config.maxredirects = 10
 // Agent optimization
 config.timeout = 60000
 config.keepalive = false
+// Discovery Service URL
+// See: https://github.com/rqlite/rqlite/blob/master/doc/DISCOVERY.md
+config.disco_url =
 
 // Seneca web UI options
 // See: https://github.com/senecajs/seneca-web

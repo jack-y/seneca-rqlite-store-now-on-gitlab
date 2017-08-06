@@ -9,132 +9,89 @@ const testFunctions = require('./functions')
 // Test prerequisites
 const Code = require('code')
 const Lab = require('lab', {timeout: testFunctions.timeout})
-var lab = (exports.lab = Lab.script())
-var describe = lab.describe
-var it = lab.it
-var expect = Code.expect
+const lab = (exports.lab = Lab.script())
+const describe = lab.describe
+const it = lab.it
+const expect = Code.expect
+
+const errMsg = 'ko'
+// Mocks the requester
+const requestCurrent = requester.request
 
 describe('requester post', {timeout: testFunctions.timeout}, function () {
   //
-  // HTTPS result
-  it('https', function (fin) {
-    var options = {
-      protocol: 'https',
-      host: 'www.youtube.com',
-      port: 443
-    }
-    requester.post(options, '/', {})
-    .then(function (result) {
-      expect(result.data).to.exist()
-      fin()
-    })
-  })
-  // HTTPS request error
-  it('https error', function (fin) {
-    var options = {
-      protocol: 'https',
-      host: 'e-soa.com',
-      port: 443
-    }
-    requester.post(options, '/', {})
-    .catch(function (err) {
-      expect(err).to.exist()
-      fin()
-    })
-  })
-  // HTTP error on options
-  it('http error', function (fin) {
-    var options = {
-      protocol: 'http',
-      host: '',
-      port: 0
-    }
-    requester.post(options, '', {})
-    .catch(function (err) {
-      expect(err).to.exist()
-      fin()
-    })
-  })
-  // Request on the leader
-  it('leader', function (fin) {
-    // Checks if this is not a Travis Build environment
-    // There is no cluster in the Travis Build environment
-    if (!process.env.TRAVIS_HOST && testConfig.leaderhost) {
-      var oldOptionHost = testConfig.host
-      var oldOptionPort = testConfig.port
-      testConfig.host = testConfig.leaderhost
-      testConfig.port = testConfig.leaderport
-      var data = ['select count(*) from sqlite_master']
-      requester.post(testConfig, '/db/execute', data)
-      .then(function (result) {
-        testConfig.host = oldOptionHost
-        testConfig.port = oldOptionPort
-        expect(result.data.results[0]).to.exist()
-        fin()
-      })
-    } else {
-      // Running in Travis Build environment: no cluster, no test
-      fin()
-    }
-  })
-  // Redirection to the leader
-  it('redirect', function (fin) {
-    // Checks if this is not a Travis Build environment
-    // There is no cluster in the Travis Build environment
-    if (!process.env.TRAVIS_HOST && testConfig.leader) {
-      var data = ['select count(*) from sqlite_master']
-      requester.post(testConfig, '/db/execute', data)
-      .then(function (result) {
-        expect(result.data.results[0]).to.exist()
-        fin()
-      })
-    } else {
-      // Running in Travis Build environment: no cluster, no test
-      fin()
-    }
-  })
-  // Maximumu number of redirections reached
-  it('max redirect reached', function (fin) {
-    // Checks if this is not a Travis Build environment
-    // There is no cluster in the Travis Build environment
-    if (!process.env.TRAVIS_HOST && testConfig.leader) {
-      testConfig.redirects = testConfig.maxredirects
-      var data = ['select count(*) from sqlite_master']
-      requester.post(testConfig, '/db/execute', data)
-      .catch(function (err) {
-        delete testConfig.redirects
-        expect(err.error).to.exist()
-        fin()
-      })
-    } else {
-      // Running in Travis Build environment: no cluster, no test
-      fin()
-    }
-  })
   // No options object
   it('no options object', function (fin) {
-    var options = 'Oops!'
+    const options = 'Oops!'
     requester.post(options, '', {})
     .catch(function (err) {
-      expect(err.error).to.exist()
+      expect(err.error.indexOf('bad options') > -1).to.equal(true)
       fin()
     })
   })
   // Bad protocol
   it('bad protocol', function (fin) {
-    var options = { protocol: 123 }
+    const options = { protocol: 123 }
     requester.post(options, '', {})
     .catch(function (err) {
-      expect(err.error).to.exist()
+      expect(err.error.indexOf('bad options') > -1).to.equal(true)
       fin()
     })
   })
   // Bad host
   it('bad host', function (fin) {
-    var options = { protocol: 'http', host: 123 }
+    const options = { protocol: 'http', host: 123 }
     requester.post(options, '', {})
     .catch(function (err) {
-      expect(err.error).to.exist()
+      expect(err.error.indexOf('bad options') > -1).to.equal(true)
+      fin()
+    })
+  })
+  // Post
+  it('request error', function (fin) {
+    // Mocks the requester
+    requester.request = function (options) {
+      return new Promise(function (resolve, reject) {
+        return reject(new Error(errMsg))
+      })
+    }
+    //
+    requester.post(testConfig, '/', {})
+    .catch(function (err) {
+      requester.request = requestCurrent
+      expect(err.message).to.equal(errMsg)
+      fin()
+    })
+  })
+  //
+  it('request ok no data', function (fin) {
+    // Mocks the requester
+    requester.request = function (options) {
+      return new Promise(function (resolve, reject) {
+        return resolve({success: true})
+      })
+    }
+    //
+    requester.post(testConfig, '/', null)
+    .then(function (result) {
+      requester.request = requestCurrent
+      expect(result.success).to.equal(true)
+      fin()
+    })
+  })
+  //
+  it('request ok', function (fin) {
+    // Mocks the requester
+    requester.request = function (options) {
+      return new Promise(function (resolve, reject) {
+        return resolve({success: true})
+      })
+    }
+    //
+    requester.post(testConfig, '/', {})
+    .then(function (result) {
+      requester.request = requestCurrent
+      expect(result.success).to.equal(true)
       fin()
     })
   })

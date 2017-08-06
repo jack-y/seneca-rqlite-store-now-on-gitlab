@@ -172,18 +172,15 @@ queryUtils.doFields = function (list, query) {
 // Escapes the special characters
 queryUtils.escapeStr = function (input) {
   var str = '' + input
-  return str.replace(/[\0\b\t\x08\x09\x1a\n\r"'\\\%]/g, function (char) { // eslint-disable-line
+  // Escapes other characters
+  return str.replace(/[\b\t\0\x1a\n\r"'\\\%]/g, function (char) { // eslint-disable-line
     switch (char) {
-      case '\0':
-        return '\\0'
-      case '\x08':
-        return '\\b'
       case '\b':
         return '\\b'
-      case '\x09':
-        return '\\t'
       case '\t':
         return '\\t'
+      case '\0':
+        return '\\0'
       case '\x1a':
         return '\\z'
       case '\n':

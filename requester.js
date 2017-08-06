@@ -8,6 +8,7 @@
 
 // Prerequisites
 const _ = require('lodash')
+const discoclient = require('./disco-client')
 const http = require('http')
 const https = require('https')
 const httpKeepAliveAgent = new http.Agent({ keepAlive: true })
@@ -29,12 +30,11 @@ requester.get = function (options, path) {
       var extraOptions = requester.setExtraOptions(options)
       extraOptions.path = path
       extraOptions.data = null
+      extraOptions.postData = ''
       extraOptions.method = 'GET'
       // Sends the request
       requester.request(extraOptions)
-      .then(function (result) {
-        return resolve(result)
-      })
+      .then(function (result) { return resolve(result) })
       .catch(function (err) { return reject(err) })
     } else {
       // Bad options
@@ -68,9 +68,7 @@ requester.post = function (options, path, data) {
       }
       // Sends the request
       requester.request(extraOptions)
-      .then(function (result) {
-        return resolve(result)
-      })
+      .then(function (result) { return resolve(result) })
       .catch(function (err) { return reject(err) })
     } else {
       // Bad options
@@ -84,14 +82,27 @@ requester.request = function (options) {
   return new Promise(function (resolve, reject) {
     // Checks if the protocol is HTTPS
     var prot = options.protocol.startsWith('https') ? https : http
+    // Node.js: The protocol string must ends with ':'
+    options.protocol = options.protocol.endsWith(':')
+      ? options.protocol : options.protocol + ':'
     // Sends the request
     var req = prot.request(options, function (response) {
       // Gets the response
       requester.processResponse(options, response)
-      .then(function (result) {
-        return resolve(result)
-      })
+      .then(function (result) { return resolve(result) })
       .catch(function (err) { return reject(err) })
+    })
+    // Process the timeout event
+    req.setTimeout(options.timeout, function () {
+      // Checks if Discovery Service is used
+      if (options.disco_url) {
+        // Performs the request on another node
+        discoclient.request(options)
+        .then(function (result) { return resolve(result) })
+        .catch(function (err) { return reject(err) })
+      } else {
+        return req.abort()
+      }
     })
     // Process the request errors
     req.on('error', function (error) {
@@ -101,12 +112,11 @@ requester.request = function (options) {
       }
       return reject(err)
     })
-    // Post: Writes the data to the HTTP/S target
-    if (options.method === 'POST') {
-      req.write(options.postData)
-    }
+    // Writes the data to the HTTP request
+    req.write(options.postData)
     // Process the request end
-    return req.end()  // this will fire the processResponse function
+    // This will fire the processResponse function
+    req.end()
   })
 }
 
@@ -159,16 +169,12 @@ requester.processResponse = function (options, response) {
           // Checks if the redirection action is GET
           if (options.method === 'GET') {
             requester.get(newOptions, options.path)
-            .then(function (result) {
-              return resolve(result)
-            })
+            .then(function (result) { return resolve(result) })
             .catch(function (err) { return reject(err) })
           } else {
             // The redirection action is POST
             requester.post(newOptions, options.path, options.data)
-            .then(function (result) {
-              return resolve(result)
-            })
+            .then(function (result) { return resolve(result) })
             .catch(function (err) { return reject(err) })
           }
         } else {
@@ -176,12 +182,16 @@ requester.processResponse = function (options, response) {
           return reject({
             error: options.toomuchredirects,
             options: options,
-            'status': response.statusCode
+            status: response.statusCode
           })
         }
       } else {
         // Process status code != 200 and != 301: error
-        return reject({'status': response.statusCode})
+        return reject({
+          error: 'Request on error',
+          options: options,
+          status: response.statusCode
+        })
       }
     }
   })
@@ -191,9 +201,6 @@ requester.processResponse = function (options, response) {
 requester.setExtraOptions = function (options) {
   // Input options by default
   var extra = _.cloneDeep(options)
-  // Node.js: The protocol string must ends with ':'
-  extra.protocol = extra.protocol.endsWith(':')
-    ? extra.protocol : extra.protocol + ':'
   // Sets the redirects count
   extra.redirects = extra.redirects ? extra.redirects : 0
   // For self-signed certificates

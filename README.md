@@ -1,13 +1,15 @@
-![Logo]
+![Logo][]
+
 > A [seneca.js][] data storage plugin.
 
 # seneca-rqlite-store
 
-Last update: 07/28/2017
+Last update: 08/06/2017
 
-<a href="https://badge.fury.io/js/seneca-rqlite-store"><img src="https://badge.fury.io/js/seneca-rqlite-store.svg" alt="npm version" height="20"></a>&nbsp;<a href="https://www.npmjs.com/package/seneca-rqlite-store"><img src="https://img.shields.io/npm/dm/seneca-rqlite-store.svg?maxAge=2592000" alt="Downloads count"></a>&nbsp;<a href="https://travis-ci.org/jack-y/seneca-rqlite-store"><img src="https://travis-ci.org/jack-y/seneca-rqlite-store.svg?branch=master" alt="build status" data-canonical-src="https://travis-ci.org/jack-y/seneca-rqlite-store.svg" height="20"></a>&nbsp;<a href="https://david-dm.org/jack-y/seneca-rqlite-store"><img src="https://david-dm.org/jack-y/seneca-rqlite-store.svg" alt="Dependency Status" data-canonical-src="https://david-dm.org/jack-y/seneca-rqlite-store.svg" height="20"></a>&nbsp;<a href='https://coveralls.io/github/jack-y/seneca-rqlite-store?branch=master'><img src='https://coveralls.io/repos/github/jack-y/seneca-rqlite-store/badge.svg?branch=master' alt='Coverage Status' /></a>
-
-## Description
+[![npm version][npm-badge]][npm-url]
+[![Build Status][travis-badge]][travis-url]
+[![Dependency Status][david-badge]][david-url]
+[![Coveralls][BadgeCoveralls]][Coveralls]
 
 This module is a plugin for the [Seneca][] framework. It provides a storage engine that uses [RQLite][] to persist data in a distributed database.
 
@@ -32,7 +34,7 @@ RQLite is a Relational Distributed Database engine. However, this plugin is base
 - **easy** installation, deployment, and operation: RQLite uses [SQLite][] as its storage engine.
 - **SQL operations** with optimized query on fields, despite the JSON format.
 
-To take advantage of these features, **you do not need to make any changes** to your RQLite installation. All is provided by this plugin. Enjoy!
+To take advantage of these features, **you do not need to make any changes** to your RQLite installation. All is provided by this plugin. Enjoy it!
 
 ### Model
 
@@ -76,6 +78,10 @@ RQLite exposes an [HTTP API][] allowing the database to be modified such that th
 - **maxredirects**: optional integer, default is `10`. The maximum number of redirect attempts to the leader before triggering an error. See the doc about [sending requests to followers][].
 
 > Note: as the RQLite documentation says, you can connect the plugin to any node in the cluster, and it will automatically forward its requests to the leader.
+
+- **disco_url**: optional string, default is empty. The [Discovery Service][] URL with the pattern `<protocol>://<host>:<port>/<disco_id>`. If set, when the primary RQLite node cannot be reached, the Discovery Service will provide the addresses of the other nodes to connect to.
+
+> Note: a simple Express-based RQLite Cluster Discovery Service can be implemented using the [rqlite-disco-express][] package.
 
 ### HTTP options
 
@@ -156,7 +162,7 @@ As with all seneca stores, you can access the native driver, in this case, the R
 entity.native$(function (err, httpapi) {...})
 ```
 
-### Pay attention to the native$ field in the list$ function
+### Pay attention to the `native###  field in the `list###  function
 
 This plugin works with Document Databases. This is a design constraint: all the tables have **only two text columns**: *id* and *json*. The only column to be processed and to retrieve is *json*. So, this code will return a result:
 
@@ -273,6 +279,14 @@ Licensed under [MIT][].
 
 [MIT]: ./LICENSE
 [Logo]: http://senecajs.org/files/assets/seneca-logo.jpg
+[npm-badge]: https://badge.fury.io/js/seneca-rqlite-store.svg
+[npm-url]: https://npmjs.com/package/seneca-rqlite-store
+[travis-badge]: https://travis-ci.org/jack-y/seneca-rqlite-store.svg
+[travis-url]: https://travis-ci.org/jack-y/seneca-rqlite-store
+[david-badge]: https://david-dm.org/jack-y/seneca-rqlite-store.svg
+[david-url]: https://david-dm.org/jack-y/seneca-rqlite-store
+[Coveralls]: https://coveralls.io/github/jack-y/seneca-rqlite-store?branch=master
+[BadgeCoveralls]: https://coveralls.io/repos/github/jack-y/seneca-rqlite-store/badge.svg?branch=master
 [Seneca.js]: https://www.npmjs.com/package/seneca
 [Seneca]: http://senecajs.org/
 [RQLite]: https://github.com/rqlite/rqlite
@@ -286,6 +300,8 @@ Licensed under [MIT][].
 [consistency level]: https://github.com/rqlite/rqlite/blob/master/doc/CONSISTENCY.md
 [sending requests to followers]: https://github.com/rqlite/rqlite/blob/master/doc/DATA_API.md#sending-requests-to-followers
 [keep alive]: https://nodejs.org/api/http.html#http_new_agent_options
+[Discovery Service]: https://github.com/rqlite/rqlite/blob/master/doc/DISCOVERY.md
+[rqlite-disco-express]: https://npmjs.com/package/rqlite-disco-express
 [namespace]: http://senecajs.org/docs/tutorials/understanding-data-entities.html#zone-base-and-name-the-entity-namespace4
 [query format]: http://senecajs.org/docs/tutorials/understanding-query-syntax.html
 [SQLite documentation]: https://www.sqlite.org/lang.html

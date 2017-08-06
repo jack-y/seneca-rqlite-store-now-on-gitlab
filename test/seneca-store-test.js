@@ -7,7 +7,8 @@
  * needed for the Seneca data message patterns.
  * See: https://github.com/senecajs/seneca-store-test
  *
- * Note: Native SQL list is not supported because of the JSON implementation
+ * Note: Native SQL list is not supported because of the JSON format
+ * in the tables.
 **/
 
 // Default plugin options
@@ -23,9 +24,9 @@ const _ = require('lodash')
 
 // Test prerequisites
 const Lab = require('lab', {timeout: testFunctions.timeout})
-var lab = (exports.lab = Lab.script())
-var describe = lab.describe
-var it = lab.it
+const lab = (exports.lab = Lab.script())
+const describe = lab.describe
+const it = lab.it
 
 describe('seneca store', {timeout: testFunctions.timeout}, function () {
   //
@@ -53,6 +54,7 @@ describe('seneca store', {timeout: testFunctions.timeout}, function () {
     })
     // Native SQL tests are not supported because of the JSON format
     // in the tables (Document Databases)
+    // Please Use the native-test.js script instead.
     // Shared.sqltest()
     fin()
   })
