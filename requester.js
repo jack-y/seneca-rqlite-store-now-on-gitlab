@@ -160,7 +160,10 @@ requester.processResponse = function (options, response) {
           var parts = leader.split(':')
           var protocol = parts[0]
           var host = parts[1].replace('//', '')
-          var port = parseInt(parts[2])
+          // Now the query is returned in the Location header
+          // See: https://github.com/rqlite/rqlite/pull/337
+          var portParts = parts[2].split('/')
+          var port = parseInt(portParts[0])
           // Sets the new options
           var newOptions = _.cloneDeep(options)
           newOptions.protocol = protocol

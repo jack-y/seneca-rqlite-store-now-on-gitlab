@@ -4,7 +4,7 @@
 
 # seneca-rqlite-store
 
-Last update: 08/06/2017
+Last update: 08/13/2017
 
 [![npm version][npm-badge]][npm-url]
 [![Build Status][travis-badge]][travis-url]
@@ -162,7 +162,7 @@ As with all seneca stores, you can access the native driver, in this case, the R
 entity.native$(function (err, httpapi) {...})
 ```
 
-### Pay attention to the `native###  field in the `list###  function
+### Pay attention to the ` native$ `  field in the ` list$ `  function
 
 This plugin works with Document Databases. This is a design constraint: all the tables have **only two text columns**: *id* and *json*. The only column to be processed and to retrieve is *json*. So, this code will return a result:
 
@@ -209,7 +209,7 @@ entity.native$(function (err, httpapi) {
 httpapi.execute(options, statement)
 ```
 
-- **options**: the RQLite HTTP options, as declared by the application. See the  [Declaration chapter](#declaration).
+- **options**: the RQLite HTTP options, as declared by the application. See the [Declaration chapter](#declaration).
 - **statement**: the SQL string. See the [SQLite documentation][] for more informations. Please don't use the *SELECT* statement here, use the *query* function below.
 
 ### Returned object
@@ -224,8 +224,8 @@ The promise resolves the `{success: true}` object, or reject an error if it is t
 httpapi.executeTransaction(options, transaction)
 ```
 
-- **options**: the RQLite HTTP options, as declared by the application. See the  [Declaration chapter](#declaration).
-- **transaction**: an array of SQL statements. See the RQLite [Bulk API  documentation][] for more informations.
+- **options**: the RQLite HTTP options, as declared by the application. See the [Declaration chapter](#declaration).
+- **transaction**: an array of SQL statements. See the RQLite [Bulk API documentation][] for more informations.
 
 ### Returned object
 
