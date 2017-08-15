@@ -4,7 +4,7 @@
 
 # seneca-rqlite-store
 
-Last update: 08/13/2017
+Last update: 08/15/2017
 
 [![npm version][npm-badge]][npm-url]
 [![Build Status][travis-badge]][travis-url]
@@ -103,7 +103,7 @@ An operation on an unknown table triggers the *no such table* error. Your applic
 
 ## Declaration
 
-Your application must declare this plugin. Here is an exemple with the options set:
+Your application must declare this plugin. Here is an exemple with some options set:
 
 ```js
 seneca
@@ -139,15 +139,10 @@ entity.remove$({id: ...}, function (err, entity) { ... })
 The standard Seneca [query format][] is supported:
 
 - `.list$({f1:v1, f2:v2, ...})` implies pseudo-query `f1==v1 AND f2==v2, ...`.
-
 - `.list$({f1:v1, ..., sort$:{f1:1}})` means sort by f1, ascending.
-
 - `.list$({f1:v1, ..., sort$:{f1:-1}})` means sort by f1, descending.
-
 - `.list$({f1:v1, ..., limit$:10})` means only return 10 results.
-
 - `.list$({f1:v1, ..., skip$:5})` means skip the first 5.
-
 - `.list$({f1:v1, ..., fields$:['f1','f2']})` means only return the listed fields.
 
 > Note: you can use `sort$`, `limit$`, `skip$` and `fields$` together.
@@ -281,7 +276,7 @@ Licensed under [MIT][].
 [Logo]: http://senecajs.org/files/assets/seneca-logo.jpg
 [npm-badge]: https://badge.fury.io/js/seneca-rqlite-store.svg
 [npm-url]: https://npmjs.com/package/seneca-rqlite-store
-[travis-badge]: https://travis-ci.org/jack-y/seneca-rqlite-store.svg
+[travis-badge]: https://travis-ci.org/jack-y/seneca-rqlite-store.svg?branch=master
 [travis-url]: https://travis-ci.org/jack-y/seneca-rqlite-store
 [david-badge]: https://david-dm.org/jack-y/seneca-rqlite-store.svg
 [david-url]: https://david-dm.org/jack-y/seneca-rqlite-store
